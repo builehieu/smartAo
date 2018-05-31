@@ -2,15 +2,15 @@ import React from 'react';
 
 
 import LogInScreen from './src/screens/LogIn';
-import HomeScreen from './src/screens/Home';
+import MainScreen from './src/screens/MainScreen';
 import {AppProvider} from './src/components/Provider'
-import { StackNavigator } from 'react-navigation';
+import { createStackNavigator } from 'react-navigation';
 import WithProvider from './src/components/WithProvider';
 
 
-const Navigation = StackNavigator({
-    Home: { screen: WithProvider(HomeScreen) },
-    LogIn: { screen: WithProvider(LogInScreen) },
+const Navigation = createStackNavigator({
+    Home: { screen: MainScreen },
+    LogIn: { screen: LogInScreen},
 },
     {
         headerMode: 'none',

@@ -88,7 +88,7 @@ class LogInScreen extends Component {
         loading: false,
     }
     onPressBtnFBLogIn = () => {
-        this.props.navigation.navigate('Home');
+        
     };
     onPressBtnLogIn = () => {
         if (this.state.username === 'admin' && this.state.password === '123') {

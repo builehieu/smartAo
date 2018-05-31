@@ -1,1 +1,1 @@
-// export const isLogIn = false;
+export const screen = 'home';
