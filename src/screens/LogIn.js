@@ -14,6 +14,10 @@ import HomeScreen from './Home';
 import { AppConsumer } from '../components/Provider';
 import { AppProvider } from '../components/Provider';
 
+import io from 'socket.io-client/dist/socket.io';
+window.navigator.userAgent = 'react-native';
+
+
 const styles = StyleSheet.create({
     root: {
         flex: 1,
@@ -80,20 +84,30 @@ const styles = StyleSheet.create({
 import { StackNavigator } from 'react-navigation';
 
 
-
+var e;
 class LogInScreen extends Component {
     state = {
-        username: '',
-        password: '',
+        usrname: '',
+        pssword: '',
         loading: false,
     }
+    constructor() {
+        super();
+        e =this;
+        this.socket = io('http://172.30.115.66:3000', { jsonp: false });
+        this.socket.on('authenticated', function(data) {
+            ToastAndroid.show('Welcome ' + data, ToastAndroid.SHORT);
+        });
+    }
     onPressBtnFBLogIn = () => {
-        
+
     };
-    onPressBtnLogIn = () => {
-        if (this.state.username === 'admin' && this.state.password === '123') {
-            ToastAndroid.show('Welcome ', ToastAndroid.SHORT);
-            this.props.navigation.navigate('Home');
+    onPressBtnLogIn = (username, setUsername, isLogIn, logIn) => {
+        if (this.state.usrname === 'hieu' && this.state.pssword === '123') {
+            this.socket.emit('authorization', this.state.usrname);
+            setUsername(this.state.usrname);
+            logIn('true');
+
         } else {
             ToastAndroid.show('Username or password incorrect!', ToastAndroid.SHORT);
         }
@@ -108,7 +122,7 @@ class LogInScreen extends Component {
         }
         return (
             <AppConsumer>
-                {({ themeColor, isLogIn, logIn }) => (
+                {({ themeColor, isLogIn, logIn, username, setUsername }) => (
                     <KeyboardAvoidingView style={styles.root}>
                         <View style={styles.titileWrapper}>
                             <Text style={styles.text} >smartAo</Text>
@@ -123,7 +137,7 @@ class LogInScreen extends Component {
                                 ref={(input) => (this.usernameInput = input)}
                                 placeholderTextColor="gray"
                                 underlineColorAndroid="transparent"
-                                onChangeText={(text) => this.setState({ username: text })}
+                                onChangeText={(text) => this.setState({ usrname: text })}
                             />
                             <TextInput
                                 style={styles.textInput}
@@ -134,7 +148,7 @@ class LogInScreen extends Component {
                                 secureTextEntry
                                 placeholderTextColor="gray"
                                 underlineColorAndroid="transparent"
-                                onChangeText={(text) => this.setState({ password: text })}
+                                onChangeText={(text) => this.setState({ pssword: text })}
                             />
                         </View>
                         <View style={styles.buttonsWrapper}>
@@ -149,7 +163,7 @@ class LogInScreen extends Component {
                             <View style={{ flexDirection: 'row', alignContent: 'center' }}>
                                 <TouchableOpacity
                                     style={styles.button}
-                                    onPress={this.onPressBtnLogIn}
+                                    onPress={() => this.onPressBtnLogIn(username, setUsername, isLogIn, logIn)}
                                 >
                                     <Text style={styles.buttonLable}>Log in</Text>
                                 </TouchableOpacity>
@@ -167,7 +181,6 @@ class LogInScreen extends Component {
                                 <Text style={styles.text}> Don't have an account? </Text>
                                 <TouchableOpacity
                                     underlayColor='#ffb951'
-                                    onPress={this.onPressBtnSignUp}
                                 >
                                     <Text style={styles.link}> Sign Up ! </Text>
                                 </TouchableOpacity>

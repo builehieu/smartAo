@@ -8,6 +8,7 @@ import { createBottomTabNavigator } from 'react-navigation';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 
+
 YellowBox.ignoreWarnings(['Warning: isMounted(...) is deprecated', 'Module RCTImageLoader']);
 const Tab = createBottomTabNavigator ({
     Home: { screen: HomeScreen },

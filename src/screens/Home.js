@@ -5,28 +5,27 @@ import ProfileScreen from './Profile';
 import StaticSreen from './Static';
 import { StackNavigator, TabNavigator, TabBarBottom } from 'react-navigation';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { AppConsumer } from '../components/Provider';
 
 import io from 'socket.io-client/dist/socket.io';
 window.navigator.userAgent = 'react-native';
 
+//charts libs
+var e;
 export default class HomeScreen extends React.Component {
-    state = {
-        name: 'abc'
-    }
     constructor() {
         super();
-        this.socket = io('http://172.30.115.53:3000', { jsonp: false });
-        this.socket.on('update', () => {
-            console.log('change name', this.state.name);
-            this.setState({ name: 'Nate' })
-        });
     }
     render() {
-        console.log('name', this.state.name);
+        const data = [50, 10, 40, 95, -4, -24, 85, 91, 35, 53, -53, 24, 50, -20, -80];
         return (
-            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                <Text>{this.state.name}</Text>
-            </View>
+            <AppConsumer>
+                {({ username, setUsername, isLogIn }) => (
+                    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                        <Text>{username} is logIn: {isLogIn}</Text>
+                    </View>
+                )}
+            </AppConsumer>
         );
     }
 }

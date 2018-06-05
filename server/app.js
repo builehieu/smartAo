@@ -11,8 +11,13 @@ app.get('/', function (req, res) {
 
 io.on('connection', function (socket) {
   console.log(socket.id);
-  socket.on('update', () =>{ 
+  socket.on('update', () => {
     io.emit('update');
     console.log('update');
   });
+  socket.on('authorization', function(data) {
+    console.log('authorization user: ' + data);
+    io.sockets.emit('authenticated', data);
+  });
 });
+
