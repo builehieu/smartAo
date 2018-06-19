@@ -1,1 +1,1 @@
-export const screen = 'home';
+export const ACCESS_TOKEN = '';

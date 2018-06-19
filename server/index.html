@@ -3,10 +3,11 @@
 <button>Upadate</button>
 <script src="/socket.io/socket.io.js"></script>
 <script>
+    var hieu = 'builehieu';
     var socket = io();
     var button = document.querySelector('button');
     button.onclick = function(){
         console.log('sending update');
-        socket.emit('update');
+        socket.emit('update','hieu bui');
     }
 </script>

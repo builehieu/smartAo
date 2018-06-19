@@ -10,6 +10,7 @@ import {
     Image,
     AsyncStorage
 } from 'react-native';
+import { createStackNavigator } from 'react-navigation';
 import Entypo from 'react-native-vector-icons/Entypo';
 import HomeScreen from './Home';
 import { AppConsumer } from '../components/Provider';
@@ -22,25 +23,26 @@ window.navigator.userAgent = 'react-native';
 const styles = StyleSheet.create({
     root: {
         flex: 1,
-        justifyContent: 'space-between',
+        justifyContent: 'center',
         // backgroundColor: 'blue',
     },
     titileWrapper: {
-        flex: 0.55,
+        flex: 0.2,
         alignItems: 'center',
         justifyContent: 'center',
-        // backgroundColor: 'pink'
+       // backgroundColor: 'pink'
     },
     inputWrapper: {
+        flex: 0.5,
         alignItems: 'center',
         justifyContent: 'center',
-        //  backgroundColor: 'orange'
+        //backgroundColor: 'orange'
     },
     buttonsWrapper: {
         flex: 0.2,
         alignItems: 'center',
         justifyContent: 'center',
-        //  backgroundColor: 'cyan'
+        //backgroundColor: 'cyan'
     },
     textInput: {
         borderWidth: 1,
@@ -54,8 +56,7 @@ const styles = StyleSheet.create({
     text: {
         fontSize: 13,
         fontWeight: 'bold',
-        paddingTop: 10,
-        paddingBottom: 10,
+
     },
     buttonLable: {
         textAlign: 'center',
@@ -67,8 +68,6 @@ const styles = StyleSheet.create({
         color: '#0c9eff',
         fontSize: 13,
         fontWeight: 'bold',
-        paddingTop: 10,
-        paddingBottom: 10,
     },
     button: {
         backgroundColor: '#0c9eff',
@@ -77,75 +76,30 @@ const styles = StyleSheet.create({
         margin: 5,
         borderRadius: 30,
     },
-    smallButton: {
-        alignSelf: 'center'
-    }
 })
 
-import { createStackNavigator } from 'react-navigation';
+import { StackNavigator } from 'react-navigation';
 
 
 var e;
-class LogInScreen extends Component {
+class SignUpScreen extends Component {
     state = {
-        usrname: '',
-        pssword: '',
+        username: '',
+        password: '',
+        repassword: '',
+        email: '',
         loading: false,
     }
     constructor() {
         super();
-       
+
     }
 
-    async saveToken(accessToken) {
-        try {
-            await AsyncStorage.setItem(ACCESS_TOKEN, accessToken);
-            console.log('saved accessToken !');
-            this.getToken();
-        } catch (error) {
-            console.log('error: ', error);
-        }
+
+    onPressBtnSignUp = (username, setUsername) => {
+        this.props.navigation.navigate('LogIn');
     }
 
-    async getToken() {
-        try {
-            let token = await AsyncStorage.getItem(ACCESS_TOKEN);
-            console.log('token:', token);
-        } catch (error) {
-            console.log('error: ', error);
-        }
-    }
-    async removeToken() {
-        try {
-            await AsyncStorage.removeItem(ACCESS_TOKEN);
-        } catch (error) {
-            console.log('error: ', error);
-        }
-    }
-
-    onPressTextSignUp = () => {
-        this.props.navigation.navigate('SignUp')
-    }
-
-    onPressBtnFBLogIn = () => {
-
-    };
-    onPressBtnLogIn = (username, setUsername) => {
-        if (this.state.usrname === 'hieu' && this.state.pssword === '123') {
-           // this.socket.emit('authorization', this.state.usrname);
-            setUsername(this.state.usrname);
-            this.setState({loading: true});
-            try {
-                this.saveToken(this.state.usrname);
-            } catch (error) {
-                console.log('something went wrong');   
-            }
-            this.setState({loading: false});
-            this.props.navigation.navigate('Home')
-        } else {
-            ToastAndroid.show('Username or password incorrect!', ToastAndroid.SHORT);
-        }
-    }
     render() {
         if (this.state.loading) {
             return (
@@ -159,7 +113,7 @@ class LogInScreen extends Component {
                 {({ themeColor, isLogIn, logIn, username, setUsername }) => (
                     <KeyboardAvoidingView style={styles.root}>
                         <View style={styles.titileWrapper}>
-                            <Text style={styles.text} >smartAo</Text>
+                            <Text style={styles.text} >SignUpScreen</Text>
                         </View>
                         <View style={styles.inputWrapper}>
                             <TextInput
@@ -167,57 +121,73 @@ class LogInScreen extends Component {
                                 placeholder="Username"
                                 autoCapitalize='none'
                                 returnKeyType="next"
-                                onSubmitEditing={() => this.passwordInput.focus()}
+                                onSubmitEditing={() => this.emailInput.focus()}
                                 ref={(input) => (this.usernameInput = input)}
                                 placeholderTextColor="gray"
                                 underlineColorAndroid="transparent"
-                                onChangeText={(text) => this.setState({ usrname: text })}
+                                onChangeText={(text) => this.setState({ username: text })}
+                            />
+                            <TextInput
+                                style={styles.textInput}
+                                placeholder="Email"
+                                returnKeyType="done"
+                                ref={(input) => (this.emailInput = input)}
+                                onSubmitEditing={() => this.passwordInput.focus()}
+                                secureTextEntry
+                                placeholderTextColor="gray"
+                                underlineColorAndroid="transparent"
+                                onChangeText={(text) => this.setState({ password: text })}
                             />
                             <TextInput
                                 style={styles.textInput}
                                 placeholder="Password"
                                 returnKeyType="done"
                                 ref={(input) => (this.passwordInput = input)}
+                                onSubmitEditing={() => this.repasswordInput.focus()}
+                                secureTextEntry
+                                placeholderTextColor="gray"
+                                underlineColorAndroid="transparent"
+                                onChangeText={(text) => this.setState({ password: text })}
+                            />
+                            <TextInput
+                                style={styles.textInput}
+                                placeholder="Retype Password"
+                                returnKeyType="done"
+                                ref={(input) => (this.repasswordInput = input)}
                                 onSubmitEditing={() => this.onPressBtnLogIn}
                                 secureTextEntry
                                 placeholderTextColor="gray"
                                 underlineColorAndroid="transparent"
-                                onChangeText={(text) => this.setState({ pssword: text })}
+                                onChangeText={(text) => this.setState({ repassword: text })}
                             />
+
                         </View>
                         <View style={styles.buttonsWrapper}>
                             <View style={{ alignItems: 'center' }}>
-                                <View style={{ flexDirection: 'row' }}>
-                                    <Text style={styles.text}> Forgot your login details? </Text>
+                                <View style={{ flexDirection: 'column', alignItems: 'center' }}>
+                                    <Text style={styles.text}> By clicking SignUp you have agree with </Text>
                                     <TouchableOpacity>
-                                        <Text style={styles.link}> Get help </Text>
+                                        <Text style={styles.link}> Terms and Conditions </Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>
                             <View style={{ flexDirection: 'row', alignContent: 'center' }}>
                                 <TouchableOpacity
                                     style={styles.button}
-                                    onPress={() => this.onPressBtnLogIn(username, setUsername)}
+                                    onPress={() => this.onPressBtnSignUp(username, setUsername)}
                                 >
-                                    <Text style={styles.buttonLable}>Log in</Text>
+                                    <Text style={styles.buttonLable}>Sign Up</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity
-                                    style={styles.smallButton}
-                                    onPress={this.onPressBtnFBLogIn}
-                                >
-                                    <Entypo size={45} name="facebook-with-circle" color={themeColor} />
-                                </TouchableOpacity>
-
                             </View>
                         </View>
-                        <View style={{ flex: 0.1, alignItems: 'center', backgroundColor: '#f2f2f2' }}>
+                        <View style={{ flex: 0.1, justifyContent: 'space-around', alignItems:'center' , backgroundColor: '#f2f2f2' }}>
                             <View style={{ flexDirection: 'row', top: 3 }}>
-                                <Text style={styles.text}> Don't have an account? </Text>
+                                <Text style={styles.text}> Aldready have an account? </Text>
                                 <TouchableOpacity
                                     underlayColor='#ffb951'
-                                    onPress={this.onPressTextSignUp}
+                                    onPress ={() => this.props.navigation.goBack()}
                                 >
-                                    <Text style={styles.link}> Sign Up ! </Text>
+                                    <Text style={styles.link}> Log In ! </Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -229,4 +199,4 @@ class LogInScreen extends Component {
     }
 }
 
-export default LogInScreen;
+export default SignUpScreen;
