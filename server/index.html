@@ -1,13 +1,28 @@
 <h1>Wellcum</h1>
 
-<button>Upadate</button>
+<button>Update</button>
 <script src="/socket.io/socket.io.js"></script>
 <script>
-    var hieu = 'builehieu';
+    var cam_bien1 = [
+        { x: 10, y: 0 },
+        { x: 11, y: 12 },
+        { x: 12, y: 30 },
+        { x: 13, y: 100 },
+        { x: 14, y: 20 },
+    ];
+    var cam_bien2 = [
+        { x: 10, y: 0 },
+        { x: 11, y: 0 },
+        { x: 12, y: 50 },
+        { x: 13, y: 40 },
+        { x: 14, y: 10 },
+    ];
+
     var socket = io();
     var button = document.querySelector('button');
-    button.onclick = function(){
+    button.onclick = function () {
         console.log('sending update');
-        socket.emit('update','hieu bui');
+        socket.emit('data_cambien1', cam_bien1);
+        socket.emit('data_cambien2', cam_bien2);
     }
 </script>

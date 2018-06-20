@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
     text: {
         fontSize: 15,
         fontWeight: 'bold',
-        paddingLeft:10,
+        paddingLeft: 10,
         paddingBottom: 10,
     },
     buttonLable: {
@@ -88,24 +88,36 @@ const screenWidth = Dimensions.get('window').width;
 export default class HomeScreen extends React.Component {
     constructor() {
         super();
+        this.state = {
+            test: 'alooooo',
+            cam_bien1: [{x:10, y:0}],
+            cam_bien2: [{x:10, y:0}],
+        }
         e = this;
-        this.socket = io('http://172.30.115.66:3000', { jsonp: true });
+        this.socket = io('http://172.30.115.59:3000', { jsonp: false });
         this.socket.on('authenticated', function (data) {
             ToastAndroid.show('Welcome ' + data, ToastAndroid.SHORT);
         });
-        this.socket.on('data', (data) => {
-            ToastAndroid.show('Welcome ' + data.cam_bien1, ToastAndroid.SHORT);
-            this.setState({ cambien1: data.cam_bien1 });
-            this.setState({ cambien2: data.cam_bien2 })
-            console.log(data);
+        this.socket.on('data_cambien1', (data) => {
+            console.log('cam bien 1: ',data);
+            var j = this.state.cam_bien1.concat(data);
+            console.log('j: ' ,j);
+            j.splice(0,1);
+            console.log('j after delete: ' ,j);
+            e.setState({ cam_bien1: j });
+        });
+        this.socket.on('data_cambien2', (data) => {
+            console.log('cam bien 2: ',data);
+            var f = this.state.cam_bien2.concat(data);
+            console.log('f: ' ,f);
+            f.splice(0,1);
+            console.log('f after delete: ' ,f);
+            e.setState({ cam_bien2: data });
+           
+           
         });
     }
-    state = {
 
-        test: 'alooooo',
-        cambien1: '',
-        cambien2: '',
-    }
 
 
     render() {
@@ -129,24 +141,12 @@ export default class HomeScreen extends React.Component {
         let sampleData = [
             {
                 seriesName: 'series1',
-                data: [
-                    { x: '10', y: 30 },
-                    { x: '11', y: 200 },
-                    { x: '12', y: 170 },
-                    { x: '13', y: 250 },
-                    { x: '14', y: 10 }
-                ],
+                data: this.state.cam_bien1,
                 color: '#297AB1'
             },
             {
                 seriesName: 'series2',
-                data: [
-                    { x: '10', y: 20 },
-                    { x: '11', y: 100 },
-                    { x: '12', y: 140 },
-                    { x: '13', y: 500 },
-                    { x: '14', y: 40 }
-                ],
+                data:this.state.cam_bien2,
                 color: 'purple'
             }
         ]
@@ -156,17 +156,17 @@ export default class HomeScreen extends React.Component {
                     <ScrollView style={styles.root}>
                         <View style={styles.dataWrapper}>
                             <Text style={styles.text}
-                            >Tổng quan</Text>
+                            >Tổng Quan</Text>
                             <View style={styles.chartWrapper}>
-                                <PureChart
+                                {/* <PureChart
                                     data={sampleDataPie}
                                     type={'pie'}
-                                />
+                                /> */}
                             </View>
                         </View>
                         <View style={styles.dataWrapper}>
                             <Text style={styles.text}
-                            >Độ ẩm tuần 2 T6</Text>
+                            >Cam biens:</Text>
                             <View style={styles.chartWrapper}>
                                 <PureChart type={'line'}
                                     data={sampleData}
@@ -183,7 +183,7 @@ export default class HomeScreen extends React.Component {
                             <Text style={styles.text}
                             >Mật độ ánh sáng 2 T6</Text>
                             <View style={styles.chartWrapper}>
-                                <PureChart type={'bar'}
+                                {/* <PureChart type={'bar'}
                                     data={sampleData}
                                     width={'100%'}
                                     customValueRenderer={(index, point) => {
@@ -191,7 +191,7 @@ export default class HomeScreen extends React.Component {
                                         return (
                                             <Text style={{ textAlign: 'center' }}>{point.y}</Text>
                                         )
-                                    }} />
+                                    }} /> */}
                             </View>
                         </View>
 
