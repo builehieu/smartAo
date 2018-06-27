@@ -8,11 +8,14 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { AppConsumer } from '../components/Provider';
 import { ACCESS_TOKEN } from '../utils/constants';
 
+import { Defs, LinearGradient, Stop } from 'react-native-svg';
+import { LineChart, BarChart, Grid, ProgressCircle, YAxis, XAxis } from 'react-native-svg-charts';
+import * as shape from 'd3-shape';
+import * as scale from 'd3-scale'
 
 import io from 'socket.io-client/dist/socket.io';
 window.navigator.userAgent = 'react-native';
 
-import PureChart from 'react-native-pure-chart';
 //charts libs
 var e;
 const styles = StyleSheet.create({
@@ -27,6 +30,11 @@ const styles = StyleSheet.create({
         marginRight: 10,
         justifyContent: 'flex-start',
 
+    },
+    header: {
+        padding: 10,
+        justifyContent: 'flex-start',
+        backgroundColor: 'white',
     },
     chartWrapper: {
         padding: 15,
@@ -121,6 +129,21 @@ export default class HomeScreen extends React.Component {
 
 
     render() {
+        const data = [50, 10, 40, 95, -4, -24, 85, 91, 35, 53, -53, 24, 50, -20, -80]
+        const xAxisHeight = 30
+        const verticalContentInset = { top: 10, bottom: 10 }
+        const axesSvg = { fontSize: 10, fill: 'grey' };
+
+        const Gradient = () => (
+            <Defs key={'gradient'}>
+                <LinearGradient id={'gradient'} x1={'0'} y={'0%'} x2={'100%'} y2={'0%'}>
+                    <Stop offset={'0%'} stopColor={'rgb(134, 65, 244)'} />
+                    <Stop offset={'100%'} stopColor={'rgb(66, 194, 244)'} />
+                </LinearGradient>
+            </Defs>
+        )
+
+
         let sampleDataPie = [
             {
                 value: 50,
@@ -153,49 +176,109 @@ export default class HomeScreen extends React.Component {
         return (
             <AppConsumer>
                 {({ username, setUsername }) => (
-                    <ScrollView style={styles.root}>
-                        <View style={styles.dataWrapper}>
-                            <Text style={styles.text}
-                            >Tổng Quan</Text>
-                            <View style={styles.chartWrapper}>
-                                {/* <PureChart
-                                    data={sampleDataPie}
-                                    type={'pie'}
-                                /> */}
+                    <View style={styles.root}>
+                        <View style={styles.header}>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                <View style={{ alignItems: 'center', justifyContent: 'space-between' }}>
+                                    <ProgressCircle
+                                        style={{ height: 100, width: 100 }}
+                                        progress={0.7}
+                                        progressColor={'rgb(77, 166, 255)'}
+                                    />
+                                    <Text style={styles.text}>Độ ẩm</Text>
+                                </View>
+                                <View style={{ alignItems: 'center', justifyContent: 'space-between' }}>
+                                    <ProgressCircle
+                                        style={{ height: 100, width: 100 }}
+                                        progress={0.9}
+                                        progressColor={'rgb(255, 80, 80)'}
+                                    />
+                                    <Text style={styles.text}>Dinh Dưỡng</Text>
+                                </View>
+                                <View style={{ alignItems: 'center', justifyContent: 'space-between' }}>
+                                    <ProgressCircle
+                                        style={{ height: 100, width: 100 }}
+                                        progress={0.2}
+                                        progressColor={'rgb(255, 153, 51)'}
+                                    />
+                                    <Text style={styles.text}>Nhiệt độ</Text>
+                                </View>
                             </View>
                         </View>
-                        <View style={styles.dataWrapper}>
-                            <Text style={styles.text}
-                            >Cam biens:</Text>
-                            <View style={styles.chartWrapper}>
-                                <PureChart type={'line'}
-                                    data={sampleData}
-                                    width={'100%'}
-                                    customValueRenderer={(index, point) => {
-                                        if (index % 2 === 0) return null
-                                        return (
-                                            <Text style={{ textAlign: 'center', fontSize: 10 }}>{point.y}</Text>
-                                        )
-                                    }} />
-                            </View>
-                        </View>
-                        <View style={styles.dataWrapper}>
-                            <Text style={styles.text}
-                            >Mật độ ánh sáng 2 T6</Text>
-                            <View style={styles.chartWrapper}>
-                                {/* <PureChart type={'bar'}
-                                    data={sampleData}
-                                    width={'100%'}
-                                    customValueRenderer={(index, point) => {
-                                        if (index % 2 === 0) return null
-                                        return (
-                                            <Text style={{ textAlign: 'center' }}>{point.y}</Text>
-                                        )
-                                    }} /> */}
-                            </View>
-                        </View>
+                        <ScrollView>
+                            <View style={styles.dataWrapper}>
+                                <Text style={styles.text}>Tổng quan</Text>
+                                <View style={styles.chartWrapper}>
+                                    <View style={{ flexDirection: 'row', height: 200 }}>
+                                        <YAxis
+                                            data={data}
+                                            style={{ marginBottom: xAxisHeight }}
+                                            contentInset={verticalContentInset}
+                                            svg={axesSvg}
+                                        />
+                                        <View style={{ flex: 1, paddingLeft: 1 }}>
 
-                    </ScrollView>
+                                            <LineChart
+                                                style={{ flex: 1 }}
+                                                data={data}
+                                                contentInset={verticalContentInset}
+                                                curve={shape.curveNatural}
+                                                svg={{
+                                                    strokeWidth: 2,
+                                                    stroke: 'url(#gradient)',
+                                                }}
+                                            >
+                                                <Grid />
+                                                <Gradient />
+                                            </LineChart>
+                                            <XAxis
+                                                style={{ marginHorizontal: -10, height: xAxisHeight }}
+                                                data={data}
+                                                formatLabel={(value, index) => index}
+                                                contentInset={{ left: 10, right: 10 }}
+                                                svg={axesSvg}
+                                            />
+
+                                        </View>
+
+                                    </View>
+                                </View>
+                            </View>
+
+                            <View style={styles.dataWrapper}>
+                                <Text style={styles.text}>Tổng quan</Text>
+                                <View style={styles.chartWrapper}>
+                                    <View style={{ flexDirection: 'row', height: 200 }}>
+                                        <YAxis
+                                            data={data}
+                                            style={{ marginBottom: xAxisHeight }}
+                                            contentInset={verticalContentInset}
+                                            svg={axesSvg}
+                                        />
+                                        <View style={{ flex: 1, paddingLeft: 1 }}>
+
+                                            <BarChart
+                                                style={{ flex: 1 }}
+                                                data={data}
+                                                gridMin={0}
+                                                svg={{ fill: 'rgb(134, 65, 244)' }}
+                                            />
+                                            <XAxis
+                                                style={{ marginTop: 10 }}
+                                                data={data}
+                                                scale={scale.scaleBand}
+                                                formatLabel={(value, index) => index}
+                                                labelStyle={{ color: 'black' }}
+                                            />
+
+                                        </View>
+
+                                    </View>
+                                </View>
+                            </View>
+                        </ScrollView>
+
+                    </View>
                 )}
             </AppConsumer>
         );
