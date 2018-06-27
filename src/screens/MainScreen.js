@@ -12,9 +12,10 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 YellowBox.ignoreWarnings(['Warning: isMounted(...) is deprecated', 'Module RCTImageLoader']);
 const Tab = createBottomTabNavigator ({
     Home: { screen: HomeScreen },
-    Static: { screen: StaticSreen },
-    Profile: { screen: ProfileScreen },
+   // Static: { screen: StaticSreen },
     Device: { screen: DevicesScreen },
+    Profile: { screen: ProfileScreen },
+    
   },
     {
       navigationOptions: ({ navigation }) => ({

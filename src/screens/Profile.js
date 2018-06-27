@@ -2,51 +2,30 @@ import React, { Component } from 'react';
 import {
     View,
     Text,
-    TextInput,
-    ToastAndroid,
     TouchableOpacity,
     StyleSheet,
-    KeyboardAvoidingView,
     Image,
     AsyncStorage,
+    BackHandler,
 } from 'react-native';
+
+import { createStackNavigator } from 'react-navigation';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-
-import { List, ListItem } from 'react-native-elements'
 import { makeCircle } from '../utils/metrics';
 import { ACCESS_TOKEN } from '../utils/constants';
-
-
-const list = [
-    {
-        title: 'Change information',
-        icon: 'create'
-    },
-    {
-        title: 'Change password',
-        icon: 'vpn-key'
-    },
-    {
-        title: 'About',
-        icon: 'info-outline'
-    },
-]
+import ChangeUserInfor from './ChangeUserInfo';
+import About from './About';
 
 const styles = StyleSheet.create({
     root: {
         flex: 1,
         justifyContent: 'flex-start',
-        
-        // backgroundColor: 'blue',
     },
     avatarWrapper: {
         padding: 20,
         flex: 0.4,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    btnWrapper: {
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -58,18 +37,22 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: 'black',
     },
-    buttonLable: {
-        textAlign: 'center',
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: 'white'
-    },
     link: {
         color: '#0c9eff',
         fontSize: 13,
         fontWeight: 'bold',
         paddingTop: 10,
         paddingBottom: 10,
+    },
+    btnWrapper: {
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    buttonLable: {
+        textAlign: 'center',
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: 'white'
     },
     button: {
         backgroundColor: 'red',
@@ -78,10 +61,31 @@ const styles = StyleSheet.create({
         margin: 5,
         borderRadius: 30,
     },
+    opWrapper: {
+        padding: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    opLable: {
+        paddingLeft: 10,
+        fontSize: 15,
+        fontWeight: 'normal',
+        color: 'gray'
+    },
+    op: {
+        marginBottom: 10,
+        padding: 10,
+        alignItems: 'center',
+        flexDirection: 'row',
+        backgroundColor: 'white',
+        paddingLeft: 15,
+        width: '100%',
+        borderRadius: 30,
+    },
 });
 
 
-export default class ProfileScreen extends React.Component {
+class ProfileScreen extends React.Component {
 
     onPressBtnLogOut = async () => {
         try {
@@ -89,7 +93,7 @@ export default class ProfileScreen extends React.Component {
         } catch (error) {
             console.log('error: ', error);
         }
-        this.props.navigation.navigate('LogIn');
+        BackHandler.exitApp();
     }
 
     render() {
@@ -109,24 +113,36 @@ export default class ProfileScreen extends React.Component {
                     </Text>
                     </View>
                 </View>
-                <List>
-                    {
-                        list.map((item, i) => (
-                            <ListItem
-                                key={i}
-                                title={item.title}
-                                leftIcon={{ name: item.icon }}
-                            />
-                        ))
-                    }
-                </List>
+                <View>
+                    <View style={styles.opWrapper}>
+                        <TouchableOpacity
+                            style={styles.op}
+                            onPress={() => this.props.navigation.navigate('ChangeUserInfor')}
+                        >
+                            <MaterialIcons name='account-circle' size={27} color='black' />
+                            <Text style={styles.opLable}>Change user's info</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.op}>
+                            <MaterialIcons name='lock-outline' size={27} color='black' />
+                            <Text style={styles.opLable}>Change password</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={styles.op}
+                            onPress={() => this.props.navigation.navigate('About')}
+                        >
+                            <MaterialIcons name='info-outline' size={27} color='black' />
+                            <Text style={styles.opLable}>About</Text>
+                        </TouchableOpacity>
+                    </View>
+
+                </View>
                 <View style={styles.btnWrapper}>
-                <TouchableOpacity
-                    style={styles.button}
-                    onPress={() => this.onPressBtnLogOut()}
-                >
-                    <Text style={styles.buttonLable}>Log Out</Text>
-                </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={() => this.onPressBtnLogOut()}
+                    >
+                        <Text style={styles.buttonLable}>Log Out</Text>
+                    </TouchableOpacity>
                 </View>
             </View >
 
@@ -134,3 +150,31 @@ export default class ProfileScreen extends React.Component {
         );
     }
 }
+
+
+export default ProfileNavigation = createStackNavigator({
+    Profile: {
+        screen: ProfileScreen,
+        navigationOptions: () => ({
+            title: `Profile`,
+        }),
+    },
+    ChangeUserInfor: {
+        screen: ChangeUserInfor,
+        navigationOptions: () => ({
+            title: `Change User's Infor`,
+        }),
+    },
+    About: {
+        screen: About,
+        navigationOptions: () => ({
+            title: `About`,
+        }),
+    },
+},
+    {
+
+        headerMode: 'screen',
+        initialRouteName: 'Profile',
+    }
+);
