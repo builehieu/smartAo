@@ -22,6 +22,7 @@ const styles = StyleSheet.create({
     root: {
         flex: 1,
         justifyContent: 'flex-start',
+        backgroundColor: '#f2f1ed',
     },
     avatarWrapper: {
         padding: 20,

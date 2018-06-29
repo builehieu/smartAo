@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ToastAndroid, Math, Dimensions, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ToastAndroid, Math, Dimensions, ScrollView, StatusBar } from 'react-native';
 import { AppConsumer } from '../components/Provider';
 
-import { Defs, LinearGradient, Stop } from 'react-native-svg';
-import { LineChart, BarChart, Grid, ProgressCircle, YAxis, XAxis } from 'react-native-svg-charts';
-import * as shape from 'd3-shape';
+import { Defs, LinearGradient, Stop } from 'react-native-svg'
+import { LineChart, BarChart, Grid, ProgressCircle, YAxis, XAxis } from 'react-native-svg-charts'
+import * as shape from 'd3-shape'
 import * as scale from 'd3-scale'
 
-import io from 'socket.io-client/dist/socket.io';
-window.navigator.userAgent = 'react-native';
+import io from 'socket.io-client/dist/socket.io'
+window.navigator.userAgent = 'react-native'
 
 //charts libs
 var e;
@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
     root: {
         flex: 1,
         //justifyContent: 'flex-start',
-        backgroundColor: '#f2f1ed',
+        backgroundColor: '#ededf8',
     },
     dataWrapper: {
         marginTop: 10,
@@ -30,17 +30,18 @@ const styles = StyleSheet.create({
         paddingBottom: 20,
         paddingTop: 20,
         justifyContent: 'flex-start',
-        backgroundColor: 'white',
-        shadowColor: 'black',
-        shadowOffset: { width: 0, height: 3 },
-        shadowOpacity: 0.2,
-        shadowRadius: 5,
-        elevation: 5,
+        backgroundColor: '#222277',
     },
     chartWrapper: {
         padding: 15,
         backgroundColor: 'white',
         borderRadius: 15,
+        shadowColor: 'blue',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 1.0,
+        shadowRadius: 5,
+
+
     },
     inputWrapper: {
         alignItems: 'center',
@@ -92,6 +93,8 @@ const styles = StyleSheet.create({
         alignSelf: 'center'
     }
 })
+
+
 const screenWidth = Dimensions.get('window').width;
 
 export default class HomeScreen extends React.Component {
@@ -99,7 +102,7 @@ export default class HomeScreen extends React.Component {
         super();
         this.state = {
             test: 'alooooo',
-            cam_bien1: [50, 10, 40, 95, -4, -24, 85, 91, 35, 53, -53,],
+            cam_bien1: [50, 10, 40, 95, -4, -24, 85, 21, 35, 53, -53,],
             cam_bien2: [90, -10, 40, 35, -54, -24, 80, 9, 53, 23, 53,],
         }
         e = this;
@@ -126,9 +129,17 @@ export default class HomeScreen extends React.Component {
 
         const Gradient = () => (
             <Defs key={'gradient'}>
-                <LinearGradient id={'gradient'} x1={'0'} y={'0%'} x2={'100%'} y2={'0%'}>
+                <LinearGradient id={'blue'} x1={'0'} y={'0%'} x2={'100%'} y2={'0%'}>
                     <Stop offset={'0%'} stopColor={'rgb(134, 65, 244)'} />
                     <Stop offset={'100%'} stopColor={'rgb(66, 194, 244)'} />
+                </LinearGradient>
+                <LinearGradient id={'red'} x1={'0'} y={'60%'} x2={'0%'} y2={'60%'}>
+                    <Stop offset={'0%'} stopColor={'#ff0000'} />
+                    <Stop offset={'100%'} stopColor={'#ff0066'} />
+                </LinearGradient>
+                <LinearGradient id={'yellow'} x1={'0'} y={'50%'} x2={'0%'} y2={'60%'}>
+                    <Stop offset={'0%'} stopColor={'#ffff00'} />
+                    <Stop offset={'100%'} stopColor={'#ff9933'} />
                 </LinearGradient>
             </Defs>
         )
@@ -137,15 +148,23 @@ export default class HomeScreen extends React.Component {
             <AppConsumer>
                 {({ username, setUsername }) => (
                     <View style={styles.root}>
+                        <StatusBar
+                            backgroundColor="#19194d"
+                            barStyle="light-content"
+                        />
                         <View style={styles.header}>
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                                 <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                                     <ProgressCircle
                                         style={{ height: 100, width: 100 }}
                                         progress={0.7}
-                                        progressColor={'rgb(77, 166, 255)'}
-                                    />
+                                        progressColor={'url(#blue)'}
+                                        backgroundColor={'#19194d'}
+                                    >
+                                        <Gradient />
+                                    </ProgressCircle>
                                     <Text style={{
+                                        color: 'white',
                                         position: 'absolute',
                                         fontSize: 15,
                                         fontWeight: 'bold',
@@ -154,10 +173,14 @@ export default class HomeScreen extends React.Component {
                                 <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                                     <ProgressCircle
                                         style={{ height: 100, width: 100 }}
-                                        progress={0.9}
-                                        progressColor={'rgb(255, 80, 80)'}
-                                    />
+                                        progress={0.78}
+                                        progressColor={'url(#red)'}
+                                        backgroundColor={'#19194d'}
+                                    >
+                                        <Gradient />
+                                    </ProgressCircle>
                                     <Text style={{
+                                        color: 'white',
                                         position: 'absolute',
                                         fontSize: 15,
                                         fontWeight: 'bold',
@@ -166,10 +189,14 @@ export default class HomeScreen extends React.Component {
                                 <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                                     <ProgressCircle
                                         style={{ height: 100, width: 100 }}
-                                        progress={0.2}
-                                        progressColor={'rgb(255, 153, 51)'}
-                                    />
+                                        progress={0.45}
+                                        progressColor={'url(#yellow)'}
+                                        backgroundColor={'#19194d'}
+                                    >
+                                        <Gradient />
+                                    </ProgressCircle>
                                     <Text style={{
+                                        color: 'white',
                                         position: 'absolute',
                                         fontSize: 15,
                                         fontWeight: 'bold',
@@ -178,6 +205,7 @@ export default class HomeScreen extends React.Component {
                             </View>
                         </View>
                         <ScrollView >
+
                             <View style={styles.dataWrapper}>
                                 <Text style={styles.text}>Cảm biến 1</Text>
                                 <View style={styles.chartWrapper}>
@@ -197,7 +225,7 @@ export default class HomeScreen extends React.Component {
                                                 curve={shape.curveNatural}
                                                 svg={{
                                                     strokeWidth: 2,
-                                                    stroke: 'url(#gradient)',
+                                                    stroke: 'url(#blue)',
                                                 }}
                                             >
                                                 <Grid />
@@ -231,7 +259,7 @@ export default class HomeScreen extends React.Component {
                                                 style={{ flex: 1 }}
                                                 data={this.state.cam_bien2}
                                                 gridMin={0}
-                                                svg={{ fill: 'rgb(134, 65, 244)' }}
+                                                svg={{ fill: '#5900b3' }}
                                             >
                                                 <Grid />
                                             </BarChart>
