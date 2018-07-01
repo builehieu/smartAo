@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ToastAndroid, Math, Dimensions, ScrollView, StatusBar } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ToastAndroid, Math, Dimensions, ScrollView, StatusBar, Image } from 'react-native';
 import { AppConsumer } from '../components/Provider';
 
 import { Defs, LinearGradient, Stop } from 'react-native-svg'
@@ -7,11 +7,15 @@ import { LineChart, BarChart, Grid, ProgressCircle, YAxis, XAxis } from 'react-n
 import * as shape from 'd3-shape'
 import * as scale from 'd3-scale'
 
+import Garden from './Garden';
+import { createStackNavigator } from 'react-navigation';
+
 import io from 'socket.io-client/dist/socket.io'
 window.navigator.userAgent = 'react-native'
 
 //charts libs
 var e;
+const screenWidth = Dimensions.get('window').width;
 const styles = StyleSheet.create({
     root: {
         flex: 1,
@@ -19,28 +23,30 @@ const styles = StyleSheet.create({
         backgroundColor: '#ededf8',
     },
     dataWrapper: {
-        marginTop: 10,
+
         marginLeft: 10,
         marginRight: 10,
         justifyContent: 'flex-start',
-
+        flexDirection: 'row',
     },
     header: {
-        padding: 10,
-        paddingBottom: 20,
-        paddingTop: 20,
-        justifyContent: 'flex-start',
-        backgroundColor: '#222277',
+        height: 80,
+        marginBottom: 20,
+        justifyContent: 'center',
+        backgroundColor: '#b3e5fc',
     },
     chartWrapper: {
+        width: screenWidth / 2 - 20,
+        height: 200,
         padding: 15,
+        margin: 5,
         backgroundColor: 'white',
-        borderRadius: 15,
+        borderRadius: 10,
         shadowColor: 'blue',
         shadowOffset: { width: 0, height: 3 },
         shadowOpacity: 1.0,
         shadowRadius: 5,
-
+        justifyContent: 'flex-end',
 
     },
     inputWrapper: {
@@ -66,8 +72,7 @@ const styles = StyleSheet.create({
     text: {
         fontSize: 15,
         fontWeight: 'bold',
-        paddingLeft: 10,
-        paddingBottom: 10,
+        color: 'black',
     },
     buttonLable: {
         textAlign: 'center',
@@ -91,13 +96,31 @@ const styles = StyleSheet.create({
     },
     smallButton: {
         alignSelf: 'center'
+    },
+    image: {
+        borderTopLeftRadius: 10,
+        borderTopRightRadius: 10,
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        bottom: 0,
+        right: 0,
+        height: 160,
+        width: screenWidth / 2 - 20,
+
+    },
+    imageicon: {
+        top: 0,
+        left: 0,
+        bottom: 0,
+        right: 0,
+        height: 80,
+        width: 80,
     }
 })
 
 
-const screenWidth = Dimensions.get('window').width;
-
-export default class HomeScreen extends React.Component {
+class HomeScreen extends React.Component {
     constructor() {
         super();
         this.state = {
@@ -142,7 +165,7 @@ export default class HomeScreen extends React.Component {
                     <Stop offset={'100%'} stopColor={'#ff9933'} />
                 </LinearGradient>
             </Defs>
-        )
+        );
 
         return (
             <AppConsumer>
@@ -154,127 +177,57 @@ export default class HomeScreen extends React.Component {
                         />
                         <View style={styles.header}>
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                <Text style={{ marginLeft: 20, fontSize: 25, fontWeight: 'bold' }}>Vườn</Text>
                                 <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                                    <ProgressCircle
-                                        style={{ height: 100, width: 100 }}
-                                        progress={0.7}
-                                        progressColor={'url(#blue)'}
-                                        backgroundColor={'#19194d'}
-                                    >
-                                        <Gradient />
-                                    </ProgressCircle>
-                                    <Text style={{
-                                        color: 'white',
-                                        position: 'absolute',
-                                        fontSize: 15,
-                                        fontWeight: 'bold',
-                                    }}>Độ ẩm</Text>
+
                                 </View>
                                 <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                                    <ProgressCircle
-                                        style={{ height: 100, width: 100 }}
-                                        progress={0.78}
-                                        progressColor={'url(#red)'}
-                                        backgroundColor={'#19194d'}
-                                    >
-                                        <Gradient />
-                                    </ProgressCircle>
-                                    <Text style={{
-                                        color: 'white',
-                                        position: 'absolute',
-                                        fontSize: 15,
-                                        fontWeight: 'bold',
-                                    }}>Nhiệt độ</Text>
+
                                 </View>
                                 <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                                    <ProgressCircle
-                                        style={{ height: 100, width: 100 }}
-                                        progress={0.45}
-                                        progressColor={'url(#yellow)'}
-                                        backgroundColor={'#19194d'}
-                                    >
-                                        <Gradient />
-                                    </ProgressCircle>
-                                    <Text style={{
-                                        color: 'white',
-                                        position: 'absolute',
-                                        fontSize: 15,
-                                        fontWeight: 'bold',
-                                    }}>Nồng độ</Text>
+
                                 </View>
                             </View>
                         </View>
-                        <ScrollView >
+                        <ScrollView>
 
                             <View style={styles.dataWrapper}>
-                                <Text style={styles.text}>Cảm biến 1</Text>
-                                <View style={styles.chartWrapper}>
-                                    <View style={{ flexDirection: 'row', height: 200 }}>
-                                        <YAxis
-                                            data={this.state.cam_bien1}
-                                            style={{ marginBottom: xAxisHeight }}
-                                            contentInset={verticalContentInset}
-                                            svg={axesSvg}
-                                        />
-                                        <View style={{ flex: 1, paddingLeft: 1 }}>
-
-                                            <LineChart
-                                                style={{ flex: 1 }}
-                                                data={this.state.cam_bien1}
-                                                contentInset={verticalContentInset}
-                                                curve={shape.curveNatural}
-                                                svg={{
-                                                    strokeWidth: 2,
-                                                    stroke: 'url(#blue)',
-                                                }}
-                                            >
-                                                <Grid />
-                                                <Gradient />
-                                            </LineChart>
-                                            <XAxis
-                                                style={{ marginHorizontal: -10, height: xAxisHeight }}
-                                                data={this.state.cam_bien1}
-                                                formatLabel={(value, index) => index}
-                                                contentInset={{ left: 10, right: 10 }}
-                                                svg={axesSvg}
-                                            />
-                                        </View>
+                                <TouchableOpacity style={styles.chartWrapper} onPress={() => this.props.navigation.navigate('Garden')}>
+                                    <View style={{ alignItems: 'center', justifyContent: 'center', width: screenWidth / 2 - 50, height: 150 }}>
+                                        <Image source={{ uri: 'https://image.flaticon.com/icons/png/128/135/135620.png' }}
+                                            style={styles.imageicon} />
                                     </View>
-                                </View>
-                            </View>
+                                    <Text style={styles.text}>Cam</Text>
 
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.chartWrapper} onPress={() => this.props.navigation.navigate('Garden')}>
+                                    <View style={{ alignItems: 'center', justifyContent: 'center', width: screenWidth / 2 - 50, height: 150 }}>
+                                        <Image source={{ uri: 'https://image.flaticon.com/icons/png/128/135/135687.png' }}
+                                            style={styles.imageicon} />
+                                    </View>
+                                    <Text style={styles.text}>Cà rốt</Text>
+
+                                </TouchableOpacity>
+                            </View>
                             <View style={styles.dataWrapper}>
-                                <Text style={styles.text}>Cảm biến 2</Text>
-                                <View style={styles.chartWrapper}>
-                                    <View style={{ flexDirection: 'row', height: 200 }}>
-                                        <YAxis
-                                            data={this.state.cam_bien2}
-                                            style={{ marginBottom: xAxisHeight }}
-                                            contentInset={verticalContentInset}
-                                            svg={axesSvg}
-                                        />
-                                        <View style={{ flex: 1, paddingLeft: 1 }}>
-
-                                            <BarChart
-                                                style={{ flex: 1 }}
-                                                data={this.state.cam_bien2}
-                                                gridMin={0}
-                                                svg={{ fill: '#5900b3' }}
-                                            >
-                                                <Grid />
-                                            </BarChart>
-                                            <XAxis
-                                                style={{ marginTop: 10 }}
-                                                data={this.state.cam_bien2}
-                                                scale={scale.scaleBand}
-                                                formatLabel={(value, index) => index}
-                                                svg={axesSvg}
-                                            />
-                                        </View>
+                                <TouchableOpacity style={styles.chartWrapper} onPress={() => this.props.navigation.navigate('Garden')}>
+                                    <View style={{ alignItems: 'center', justifyContent: 'center', width: screenWidth / 2 - 50, height: 150 }}>
+                                        <Image source={{ uri: 'https://image.flaticon.com/icons/png/128/135/135761.png' }}
+                                            style={styles.imageicon} />
                                     </View>
-                                </View>
-                                <Text> </Text>
+                                    <Text style={styles.text}>Chanh</Text>
+
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.chartWrapper} onPress={() => this.props.navigation.navigate('Garden')}>
+                                    <View style={{ alignItems: 'center', justifyContent: 'center', width: screenWidth / 2 - 50, height: 150 }}>
+                                        <Image source={{ uri: 'https://image.flaticon.com/icons/png/128/135/135702.png' }}
+                                            style={styles.imageicon} />
+                                    </View>
+                                    <Text style={styles.text}>Cà Chua</Text>
+
+                                </TouchableOpacity>
                             </View>
+
                         </ScrollView>
 
                     </View>
@@ -283,3 +236,16 @@ export default class HomeScreen extends React.Component {
         );
     }
 }
+export default GardenNavigation = createStackNavigator({
+    Home: {
+        screen: HomeScreen,
+    },
+    Garden: {
+        screen: Garden,
+    },
+},
+    {
+        headerMode: 'none',
+        initialRouteName: 'Home',
+    }
+);

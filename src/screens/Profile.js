@@ -22,11 +22,27 @@ const styles = StyleSheet.create({
     root: {
         flex: 1,
         justifyContent: 'flex-start',
-        backgroundColor: '#f2f1ed',
+        backgroundColor: 'white',
+    },
+    header: {
+        flex: 0.1,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingLeft: 10,
+        paddingRight: 10,
+    },
+    quicksetting: {
+        flex: 0.15,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingLeft: 80,
+        paddingRight: 80,
     },
     avatarWrapper: {
         padding: 20,
-        flex: 0.4,
+        flex: 0.3,
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -42,8 +58,7 @@ const styles = StyleSheet.create({
         color: '#0c9eff',
         fontSize: 13,
         fontWeight: 'bold',
-        paddingTop: 10,
-        paddingBottom: 10,
+        paddingTop: 5,
     },
     btnWrapper: {
         justifyContent: 'center',
@@ -63,25 +78,26 @@ const styles = StyleSheet.create({
         borderRadius: 30,
     },
     opWrapper: {
+        flex: 0.45,
+        margin: 10,
         padding: 10,
         justifyContent: 'center',
         alignItems: 'center',
+        borderRadius: 15,
     },
     opLable: {
         paddingLeft: 10,
         fontSize: 15,
         fontWeight: 'normal',
-        color: 'gray'
+        color: 'black'
     },
     op: {
-        marginBottom: 10,
         padding: 10,
         alignItems: 'center',
         flexDirection: 'row',
-        backgroundColor: 'white',
         paddingLeft: 15,
         width: '100%',
-        borderRadius: 30,
+        //borderRadius: 30,
     },
 });
 
@@ -100,6 +116,15 @@ class ProfileScreen extends React.Component {
     render() {
         return (
             <View style={styles.root}>
+                <View style={styles.header}>
+                    <TouchableOpacity    >
+                        <MaterialIcons name='chevron-left' size={35} color='#ff5252' />
+                    </TouchableOpacity>
+                    <TouchableOpacity >
+                        <MaterialIcons name='clear' size={35} color='#ff5252' />
+                    </TouchableOpacity>
+
+                </View>
                 <View style={styles.avatarWrapper}>
                     <View style={{ flexDirection: 'column', top: 3, alignItems: 'center', justifyContent: 'space-between' }}>
                         <Image
@@ -109,40 +134,47 @@ class ProfileScreen extends React.Component {
                             }}
                             style={styles.avatarImg}
                         />
-                        <Text style={styles.textId} >
-                            Id: builehieu
-                    </Text>
+                        <Text style={styles.textId} >Bùi Lê Hiếu</Text>
+                        <Text style={styles.link} >Id: builehieu  </Text>
                     </View>
                 </View>
-                <View>
-                    <View style={styles.opWrapper}>
-                        <TouchableOpacity
-                            style={styles.op}
-                            onPress={() => this.props.navigation.navigate('ChangeUserInfor')}
-                        >
-                            <MaterialIcons name='account-circle' size={27} color='black' />
-                            <Text style={styles.opLable}>Change user's info</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.op}>
-                            <MaterialIcons name='lock-outline' size={27} color='black' />
-                            <Text style={styles.opLable}>Change password</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={styles.op}
-                            onPress={() => this.props.navigation.navigate('About')}
-                        >
-                            <MaterialIcons name='info-outline' size={27} color='black' />
-                            <Text style={styles.opLable}>About</Text>
-                        </TouchableOpacity>
-                    </View>
+                <View style={styles.quicksetting}>
+                    <TouchableOpacity  >
+                        <MaterialIcons name='notifications-active' size={35} color='#ff5252' />
+                    </TouchableOpacity>
+                    <TouchableOpacity  >
+                        <MaterialIcons name='sync' size={35} color='#ff5252' />
+                    </TouchableOpacity>
+                    <TouchableOpacity >
+                        <MaterialIcons name='wb-sunny' size={35} color='gray' />
+                    </TouchableOpacity>
 
                 </View>
-                <View style={styles.btnWrapper}>
+                <View style={styles.opWrapper}>
                     <TouchableOpacity
-                        style={styles.button}
+                        style={styles.op}
+                        onPress={() => this.props.navigation.navigate('ChangeUserInfor')}
+                    >
+                        <MaterialIcons name='account-circle' size={27} color='#00a6ff' />
+                        <Text style={styles.opLable}>Change user's info</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.op}>
+                        <MaterialIcons name='lock-outline' size={27} color='#00a6ff' />
+                        <Text style={styles.opLable}>Change password</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.op}
+                        onPress={() => this.props.navigation.navigate('About')}
+                    >
+                        <MaterialIcons name='info-outline' size={27} color='#00a6ff' />
+                        <Text style={styles.opLable}>About</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.op}
                         onPress={() => this.onPressBtnLogOut()}
                     >
-                        <Text style={styles.buttonLable}>Log Out</Text>
+                        <MaterialIcons name='clear' size={27} color='#ff5252' />
+                        <Text style={styles.opLable}>Log Out</Text>
                     </TouchableOpacity>
                 </View>
             </View >
@@ -156,26 +188,16 @@ class ProfileScreen extends React.Component {
 export default ProfileNavigation = createStackNavigator({
     Profile: {
         screen: ProfileScreen,
-        navigationOptions: () => ({
-            title: `Profile`,
-        }),
     },
     ChangeUserInfor: {
         screen: ChangeUserInfor,
-        navigationOptions: () => ({
-            title: `Change User's Infor`,
-        }),
     },
     About: {
         screen: About,
-        navigationOptions: () => ({
-            title: `About`,
-        }),
     },
 },
     {
-
-        headerMode: 'screen',
+        headerMode: 'none',
         initialRouteName: 'Profile',
     }
 );

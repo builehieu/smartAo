@@ -28,10 +28,10 @@ const Tab = createBottomTabNavigator ({
             iconName = `search`;
           }
           else if (routeName === 'Device') {
-            iconName = `control-point`;
+            iconName = `settings-input-composite`;
           }
           else if (routeName === 'Profile') {
-            iconName = `person`;
+            iconName = `settings`;
           }
           return <MaterialIcons name={iconName} size={27} color={tintColor} />;
         },

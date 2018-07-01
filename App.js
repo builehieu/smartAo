@@ -15,7 +15,7 @@ import SignUpScreen from './src/screens/SignUp';
 const Navigation = createStackNavigator({
     Home: { screen: MainScreen },
     LogIn: { screen: LogInScreen },
-    SignUp: {screen: SignUpScreen},
+    SignUp: { screen: SignUpScreen },
 },
     {
         headerMode: 'none',
@@ -27,7 +27,7 @@ const Navigation = createStackNavigator({
 
 export default class App extends React.Component {
     state = {
-        display: 'login',
+        display: 'home',
     };
     async componentWillMount() {
         let token = await AsyncStorage.getItem(ACCESS_TOKEN);
@@ -39,16 +39,16 @@ export default class App extends React.Component {
     }
 
     render() {
-        if (this.state.display === 'login')
+        if (this.state.display === 'home')
             return (
                 <AppProvider>
-                    <Navigation />
+                    <MainScreen />
                 </AppProvider>
             );
         else
             return (
                 <AppProvider>
-                    <MainScreen />
+                    <Navigation />
                 </AppProvider>
             );
     }
