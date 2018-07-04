@@ -87,14 +87,22 @@ import { createStackNavigator } from 'react-navigation';
 
 var e;
 class LogInScreen extends Component {
-    state = {
-        usrname: '',
-        pssword: '',
-        loading: false,
-    }
+    
     constructor() {
         super();
-       
+        this.state = {
+            username: '',
+            password: '',
+            loading: false,
+            token: 'nG@n2659179',
+            is_Log: 0
+        }
+        e = this;
+        this.socket = io('http://172.30.115.55:3000', { jsonp: false });
+        this.socket.on('authenticated', function (data) {
+            ToastAndroid.show('Welcome ' + data, ToastAndroid.SHORT);
+        });
+     
     }
 
     async saveToken(accessToken) {
@@ -131,16 +139,23 @@ class LogInScreen extends Component {
 
     };
     onPressBtnLogIn = (username, setUsername) => {
-        if (this.state.usrname === 'hieu' && this.state.pssword === '123') {
-           // this.socket.emit('authorization', this.state.usrname);
-            setUsername(this.state.usrname);
-            this.setState({loading: true});
+        this.setState({ loading: true });
+        try {
+            this.socket.emit('user_authentication', { token: this.state.token, username: this.state.username, password: this.state.password });
+            this.socket.on('user_authentication', (data) => {
+                this.setState({is_Log: data.authentication})
+            })
+            this.setState({ loading: false });
+        } catch (error) {
+            console.log('something went wrong');
+        }
+        if (this.state.is_Log) {
             try {
-                this.saveToken(this.state.usrname);
+                this.saveToken(this.state.token);
             } catch (error) {
-                console.log('something went wrong');   
+                console.log('something went wrong');
             }
-            this.setState({loading: false});
+            this.setState({ loading: false });
             this.props.navigation.navigate('Home')
         } else {
             ToastAndroid.show('Username or password incorrect!', ToastAndroid.SHORT);
@@ -171,7 +186,7 @@ class LogInScreen extends Component {
                                 ref={(input) => (this.usernameInput = input)}
                                 placeholderTextColor="gray"
                                 underlineColorAndroid="transparent"
-                                onChangeText={(text) => this.setState({ usrname: text })}
+                                onChangeText={(text) => this.setState({ username: text })}
                             />
                             <TextInput
                                 style={styles.textInput}
@@ -182,7 +197,7 @@ class LogInScreen extends Component {
                                 secureTextEntry
                                 placeholderTextColor="gray"
                                 underlineColorAndroid="transparent"
-                                onChangeText={(text) => this.setState({ pssword: text })}
+                                onChangeText={(text) => this.setState({ password: text })}
                             />
                         </View>
                         <View style={styles.buttonsWrapper}>

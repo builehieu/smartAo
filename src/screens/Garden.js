@@ -104,19 +104,20 @@ export default class GardenScreen extends React.Component {
             test: 'alooooo',
             cam_bien1: [50, 10, 40, 95, -4, -24, 85, 21, 35, 53, -53,],
             cam_bien2: [90, -10, 40, 35, -54, -24, 80, 9, 53, 23, 53,],
+            token: 'nG@n2659179',
         }
         e = this;
-        this.socket = io('http://172.16.117.121:3000', { jsonp: false });
+        this.socket = io('http://172.30.115.55:3000', { jsonp: false });
         this.socket.on('authenticated', function (data) {
             ToastAndroid.show('Welcome ' + data, ToastAndroid.SHORT);
-        });
-        this.socket.on('data_cambien1', (data) => {
+        })
+        this.socket.on('device', (data) => {
             console.log('cam bien 1: ', data);
-            var f = this.state.cam_bien1.concat(data);
+            var f = this.state.cam_bien1.concat(data.doam.giatri);
             console.log('f: ', f);
             f.splice(0, 1);
             console.log('f after delete: ', f);
-            e.setState({ cam_bien1: f });
+            this.setState({ cam_bien1: f });
         });
     }
 
