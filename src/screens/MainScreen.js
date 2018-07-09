@@ -4,6 +4,7 @@ import DevicesScreen from './Devices';
 import ProfileScreen from './Profile';
 import StaticSreen from './Static';
 import HomeScreen from './Home';
+import GardenScreen from './Garden';
 import { createBottomTabNavigator } from 'react-navigation';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
@@ -11,9 +12,10 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 YellowBox.ignoreWarnings(['Warning: isMounted(...) is deprecated', 'Module RCTImageLoader']);
 const Tab = createBottomTabNavigator ({
-    Home: { screen: HomeScreen },
-   // Static: { screen: StaticSreen },
+   
+    Static: { screen: StaticSreen },
     Device: { screen: DevicesScreen },
+    Home: { screen: GardenScreen },
     Profile: { screen: ProfileScreen },
     
   },

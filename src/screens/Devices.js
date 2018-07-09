@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Switch } from 'react-native';
+import { View, Text, StyleSheet, FlatList,TouchableOpacity, ScrollView, Switch,Image } from 'react-native';
+import deviceData from '../utils/deviceData';
+
+import { makeCircle } from '../utils/metrics';
 
 const styles = StyleSheet.create({
     root: {
@@ -12,8 +15,9 @@ const styles = StyleSheet.create({
         marginRight: 10,
     },
     header: {
-        padding: 10,
-        justifyContent: 'flex-start',
+        flexDirection: 'row',
+        padding: 18,
+        justifyContent: 'space-between',
         backgroundColor: 'white',
     },
     deviceWrapper: {
@@ -34,21 +38,41 @@ const styles = StyleSheet.create({
         paddingLeft: 10,
         paddingBottom: 10,
     },
+    Lable: {
+        fontSize: 25,
+        fontWeight: 'bold',
+        color: 'black'
+    },
     buttonLable: {
         textAlign: 'center',
         fontSize: 20,
         fontWeight: 'bold',
         color: 'white'
     },
+    deviceDataImage:{
+        ...makeCircle(50),
+    },
+    deviceDataName:{
+        fontWeight: 'bold',
+        fontSize:20,
+        color:'black',
+    },
+    deviceData:{
+        //color:'black',
+        fontSize:13,
+    },
+    swtWrapper:{
+        marginTop:5
+    },
     button: {
         backgroundColor: '#0c9eff',
-        padding: 10,
         width: '100%',
         margin: 5,
         borderRadius: 30,
     }
 })
-export default class DevicesScreen extends React.Component {
+
+class DeviceData extends Component{
     constructor() {
         super();
         this.state = {
@@ -62,19 +86,88 @@ export default class DevicesScreen extends React.Component {
             this.setState({SwitchOnValueHolder: true})
     }
     render() {
-        return (
-            <View style={styles.root}>
-                <ScrollView style={styles.dataWrapper}>
-                    <View style={styles.deviceWrapper}>
-                        <Text style={styles.text}>Device 1</Text>
-                        <View style={styles.btnWrapper}>
+        return(
+            <View style={{
+                flex:1,
+                flexDirection:'column',
+                paddingBottom: 5,
+            }}>
+                <View style={{
+                    flex:1,
+                    flexDirection:'row',
+                    borderRadius:10,
+                    padding: 5,
+                    backgroundColor:'white',
+                    justifyContent:'space-between',
+                }}>
+                    <Image
+                        source={{uri: this.props.item.deviceImage}}
+                        style={styles.deviceDataImage}
+                    >
+                    </Image>
+                    <View style={{
+                        flex: 1,
+                        marginLeft: 5,
+                        flexDirection:'column',
+                        alignItems: 'flex-start',
+                        justifyContent:'center',
+                    }}>
+                        <Text style={styles.deviceDataName}>{this.props.item.deviceName}</Text>
+                        <Text style={styles.deviceData}>{this.props.item.deviceDescription}</Text>
+                    </View> 
+                    <View style={{
+                        justifyContent:'center',
+                    }}>
                             <Switch
                                 onValueChange={() => this.onSwitch(this.state.SwitchOnValueHolder)}
                                 value={this.state.SwitchOnValueHolder} />
-                        </View>
                     </View>
+                </View>  
+        </View>    
+        );
+    }
+}
+
+export default class DevicesScreen extends React.Component {
+    constructor() {
+        super();
+        this.state = {
+            SwitchOnValueHolder: false
+        }
+    }
+    onSwitch(value){
+        if(value)
+            this.setState({SwitchOnValueHolder: false})
+        else
+            this.setState({SwitchOnValueHolder: true})
+    }
+    onSwitchAll(value){
+        
+    
+    }
+    render() {
+        return (
+            <View style={styles.root}>
+            <View style={styles.header}>
+                <Text style={styles.Lable}>Cảm biến</Text>
+                <Switch
+                    onValueChange={() => this.onSwitch(this.state.SwitchOnValueHolder)}
+                    value={this.state.SwitchOnValueHolder} />
+            </View>
+                <ScrollView style={styles.dataWrapper}>
+                        <FlatList
+                        data={deviceData}
+                        renderItem={({item, index})=>{
+                            return(
+                                <DeviceData item={item} index={index}>
+                                </DeviceData>
+                                );
+                            }}
+                            >   
+                        </FlatList>
                 </ScrollView>
             </View>
+            
         );
     }
 }

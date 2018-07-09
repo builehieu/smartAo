@@ -8,7 +8,8 @@ import {
     StyleSheet,
     KeyboardAvoidingView,
     Image,
-    AsyncStorage
+    AsyncStorage,
+    ActivityIndicator
 } from 'react-native';
 import Entypo from 'react-native-vector-icons/Entypo';
 import HomeScreen from './Home';
@@ -94,15 +95,20 @@ class LogInScreen extends Component {
             username: '',
             password: '',
             loading: false,
-            token: 'nG@n2659179',
-            is_Log: 0
+            token: '',
+            success: false,
+            device_name: 'Android'
         }
         e = this;
-        this.socket = io('http://172.30.115.55:3000', { jsonp: false });
+        this.socket = io('http://172.30.115.63:3000', { jsonp: false });
+       
         this.socket.on('authenticated', function (data) {
             ToastAndroid.show('Welcome ' + data, ToastAndroid.SHORT);
         });
-     
+    }
+
+    componentDidMount() {
+      this.socket.emit('name', this.state.device_name);
     }
 
     async saveToken(accessToken) {
@@ -139,27 +145,29 @@ class LogInScreen extends Component {
 
     };
     onPressBtnLogIn = (username, setUsername) => {
-        this.setState({ loading: true });
         try {
-            this.socket.emit('user_authentication', { token: this.state.token, username: this.state.username, password: this.state.password });
-            this.socket.on('user_authentication', (data) => {
-                this.setState({is_Log: data.authentication})
+            this.socket.emit('login', { username: this.state.username, password: this.state.password });
+            this.socket.on('logged', (data) => {
+                this.setState({token: data.token});
+                this.setState({success: data.success});
+                console.log('data: ', data);
+                if (data.success) {
+                    try {
+                        this.saveToken(this.state.token);
+                    } 
+                    catch (error) {
+                        console.log('something went wrong');
+                    }
+                    this.props.navigation.navigate('Home');
+                }
+                else{
+                ToastAndroid.show('Username or password incorrect!', ToastAndroid.SHORT);
+                }
             })
-            this.setState({ loading: false });
         } catch (error) {
             console.log('something went wrong');
         }
-        if (this.state.is_Log) {
-            try {
-                this.saveToken(this.state.token);
-            } catch (error) {
-                console.log('something went wrong');
-            }
-            this.setState({ loading: false });
-            this.props.navigation.navigate('Home')
-        } else {
-            ToastAndroid.show('Username or password incorrect!', ToastAndroid.SHORT);
-        }
+        
     }
     render() {
         if (this.state.loading) {

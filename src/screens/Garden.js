@@ -104,21 +104,49 @@ export default class GardenScreen extends React.Component {
             test: 'alooooo',
             cam_bien1: [50, 10, 40, 95, -4, -24, 85, 21, 35, 53, -53,],
             cam_bien2: [90, -10, 40, 35, -54, -24, 80, 9, 53, 23, 53,],
-            token: 'nG@n2659179',
+            roundp1: 0,
+            roundp2: 0,
+            roundp3: 0,
+            token: '',
         }
         e = this;
-        this.socket = io('http://172.30.115.55:3000', { jsonp: false });
+        this.socket = io('http://172.30.115.63:3000', { jsonp: false });
         this.socket.on('authenticated', function (data) {
             ToastAndroid.show('Welcome ' + data, ToastAndroid.SHORT);
         })
-        this.socket.on('device', (data) => {
-            console.log('cam bien 1: ', data);
-            var f = this.state.cam_bien1.concat(data.doam.giatri);
-            console.log('f: ', f);
-            f.splice(0, 1);
-            console.log('f after delete: ', f);
-            this.setState({ cam_bien1: f });
+        this.socket.on('dataSensor', (data) => {
+            console.log('data: ', data);
+            var f = this.state.cam_bien1.concat(data.doam1);
+              // console.log('f: ', f);
+                f.splice(0, 1);
+              //  console.log('f after delete: ', f);
+                this.setState({ cam_bien1: f });
+                this.setState({roundp1: data.doam1 / 1023});
+           
+            // const cblist = data.map(name =>{ 
+            //     console.log('name', name);
+            //     console.log('data: ', name.data);
+            //     if(name.name === 'doam1'){
+            //         var f = this.state.cam_bien1.concat(name.data);
+            //         console.log('f: ', f);
+            //         f.splice(0, 1);
+            //         console.log('f after delete: ', f);
+            //         this.setState({ cam_bien1: f });
+            //         this.setState({roundp1: name.data / 100});
+            //     } else if (name.name === 'nhietdo1'){
+            //         var f = this.state.cam_bien2.concat(name.data);
+            //         console.log('f: ', f);
+            //         f.splice(0, 1);
+            //         console.log('f after delete: ', f);
+            //         this.setState({ cam_bien2: f });
+            //         this.setState({roundp2: name.data / 100});
+            //     }
+            // })
+
+           
         });
+       // this.socket.emit('getData', {name: 'doam1'});
+        
     }
 
 
@@ -158,7 +186,7 @@ export default class GardenScreen extends React.Component {
                                 <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                                     <ProgressCircle
                                         style={{ height: 100, width: 100 }}
-                                        progress={0.7}
+                                        progress={this.state.roundp1}
                                         progressColor={'url(#blue)'}
                                         backgroundColor={'#19194d'}
                                     >
@@ -169,12 +197,12 @@ export default class GardenScreen extends React.Component {
                                         position: 'absolute',
                                         fontSize: 15,
                                         fontWeight: 'bold',
-                                    }}>Độ ẩm</Text>
+                                    }}>{this.state.roundp1*100}</Text>
                                 </View>
                                 <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                                     <ProgressCircle
                                         style={{ height: 100, width: 100 }}
-                                        progress={0.78}
+                                        progress={this.state.roundp2}
                                         progressColor={'url(#red)'}
                                         backgroundColor={'#19194d'}
                                     >
@@ -190,7 +218,7 @@ export default class GardenScreen extends React.Component {
                                 <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                                     <ProgressCircle
                                         style={{ height: 100, width: 100 }}
-                                        progress={0.45}
+                                        progress={this.state.roundp3}
                                         progressColor={'url(#yellow)'}
                                         backgroundColor={'#19194d'}
                                     >
