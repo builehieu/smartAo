@@ -20,10 +20,9 @@ const styles = StyleSheet.create({
     root: {
         flex: 1,
         //justifyContent: 'flex-start',
-        backgroundColor: '#ededf8',
+        //backgroundColor: '#ededf8',
     },
     dataWrapper: {
-
         marginLeft: 10,
         marginRight: 10,
         justifyContent: 'flex-start',
@@ -33,7 +32,7 @@ const styles = StyleSheet.create({
         height: 80,
         marginBottom: 20,
         justifyContent: 'center',
-        backgroundColor: '#b3e5fc',
+//      backgroundColor: '#b3e5fc',
     },
     chartWrapper: {
         width: screenWidth / 2 - 20,

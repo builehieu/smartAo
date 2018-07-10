@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ToastAndroid, Math, Dimensions, ScrollView, StatusBar } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ToastAndroid, Math, Dimensions, ScrollView, StatusBar, FlatList } from 'react-native';
 import { AppConsumer } from '../components/Provider';
 
 import { Defs, LinearGradient, Stop } from 'react-native-svg'
@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
     root: {
         flex: 1,
         //justifyContent: 'flex-start',
-        backgroundColor: '#ededf8',
+        backgroundColor: '#f5f4ff',
     },
     dataWrapper: {
         marginTop: 10,
@@ -27,21 +27,19 @@ const styles = StyleSheet.create({
     },
     header: {
         padding: 10,
-        paddingBottom: 20,
-        paddingTop: 20,
         justifyContent: 'flex-start',
-        backgroundColor: '#222277',
+        backgroundColor: 'white',
+    },
+    progressWrapper: {
+        padding: 10,
+        borderRadius: 10,
+        justifyContent: 'flex-start',
+        backgroundColor: 'white',
     },
     chartWrapper: {
         padding: 15,
         backgroundColor: 'white',
-        borderRadius: 15,
-        shadowColor: 'blue',
-        shadowOffset: { width: 0, height: 3 },
-        shadowOpacity: 1.0,
-        shadowRadius: 5,
-
-
+        borderRadius: 10,
     },
     inputWrapper: {
         alignItems: 'center',
@@ -67,7 +65,18 @@ const styles = StyleSheet.create({
         fontSize: 15,
         fontWeight: 'bold',
         paddingLeft: 10,
-        paddingBottom: 10,
+        marginBottom: 10,
+    },
+    text2: {
+        fontSize: 15,
+        fontWeight: 'bold',
+        color: '#262626'
+    },
+    Lable: {
+        fontSize: 25,
+        fontWeight: 'bold',
+        paddingLeft: 10,
+        color: '#262626'
     },
     buttonLable: {
         textAlign: 'center',
@@ -97,16 +106,50 @@ const styles = StyleSheet.create({
 
 const screenWidth = Dimensions.get('window').width;
 
+class ProgressData extends Component {
+    constructor() {
+        super();
+        this.state = {
+        }
+    }
+    render() {
+        return (
+            <View style={{ backgroundColor: 'white', padding: 10 }}>
+                <Text style={styles.text2}>{this.props.item.deviceName}</Text>
+                <View style={{ alignItems: 'center', justifyContent: 'center', paddingTop: 15 }}>
+                    <ProgressCircle
+                        style={{ height: 100, width: 100 }}
+                        progress={this.props.item.data / 100}
+                        progressColor={this.props.item.color}
+                        backgroundColor={'#e7e6f2'}
+                    >
+                    </ProgressCircle>
+                    <Text style={{
+                        color: '#262626',
+                        position: 'absolute',
+                        fontSize: 25,
+                        fontWeight: 'bold',
+                        paddingTop: 15
+                    }}>{this.props.item.data}</Text>
+                </View>
+            </View>
+        );
+    }
+}
+
 export default class GardenScreen extends React.Component {
     constructor() {
         super();
         this.state = {
             test: 'alooooo',
-            cam_bien1: [50, 10, 40, 95, -4, -24, 85, 21, 35, 53, -53,],
-            cam_bien2: [90, -10, 40, 35, -54, -24, 80, 9, 53, 23, 53,],
-            roundp1: 0,
-            roundp2: 0,
-            roundp3: 0,
+            cb_nhietdo: [50, 10, 40, 95, -4, -24, 85, 21, 35, 53, -53, 50, 10, 40, 95, -4, -24, 85, 21, 35, 53, -53,],
+            cb_doamD: [90, -10, 40, 35, -54, -24, 80, 9, 53, 23, 53, 50, 10, 40, 95, -4, -24, 85, 21, 35, 53, -53,],
+            cb_doamK: [90, -10, 40, 35, -54, -24, 80, 9, 53, 23, 53, 50, 10, 40, 95, -4, -24, 85, 21, 35, 53, -53,],
+            cb_anhsang: [90, -10, 40, 35, -54, -24, 80, 9, 53, 23, 53, 50, 10, 40, 95, -4, -24, 85, 21, 35, 53, -53,],
+            r_nhietdo: 30,
+            r_doamD: 50,
+            r_doamK: 70,
+            r_anhsang: 70,
             token: '',
         }
         e = this;
@@ -116,39 +159,48 @@ export default class GardenScreen extends React.Component {
         })
         this.socket.on('dataSensor', (data) => {
             console.log('data: ', data);
-            var f = this.state.cam_bien1.concat(data.doam1);
-              // console.log('f: ', f);
-                f.splice(0, 1);
-              //  console.log('f after delete: ', f);
-                this.setState({ cam_bien1: f });
-                this.setState({roundp1: data.doam1 / 1023});
-           
-            // const cblist = data.map(name =>{ 
-            //     console.log('name', name);
-            //     console.log('data: ', name.data);
-            //     if(name.name === 'doam1'){
-            //         var f = this.state.cam_bien1.concat(name.data);
-            //         console.log('f: ', f);
-            //         f.splice(0, 1);
-            //         console.log('f after delete: ', f);
-            //         this.setState({ cam_bien1: f });
-            //         this.setState({roundp1: name.data / 100});
-            //     } else if (name.name === 'nhietdo1'){
-            //         var f = this.state.cam_bien2.concat(name.data);
-            //         console.log('f: ', f);
-            //         f.splice(0, 1);
-            //         console.log('f after delete: ', f);
-            //         this.setState({ cam_bien2: f });
-            //         this.setState({roundp2: name.data / 100});
-            //     }
-            // })
+            // nhiet do
+            var f = this.state.cb_nhietdo.concat(data.nhietdo1);
+            f.splice(0, 1);
+            this.setState({ cb_nhietdo: f });
+            var s = Number((data.nhietdo1).toFixed(0))
+            this.setState({ r_nhietdo: s });
+            //do am dat
+            var g = this.state.cb_doamD.concat((data.doam1/1023)*100);
+            g.splice(0, 1);
+            this.setState({ cb_doamD: g });
+            s = Number(((data.doam1/1023)*100).toFixed(0))
+            this.setState({ r_doamD: s });
+            // do am khong khi
+            s = Number((data.doamKK1).toFixed(0))
+            this.setState({ r_doamK: s });
+            // cd AS
+            var s = Number((data.anh_sang1).toFixed(0))
+            this.setState({ r_anhsang: s });
 
-           
         });
-       // this.socket.emit('getData', {name: 'doam1'});
-        
+        this.socket.on('getData', function (data) {
+            console.log('data: ', data);
+            var f = [];
+            const hlist = data.map(sensorName =>{
+                console.log('sensorName: ', sensorName.data);
+                f = f.concat(sensorName.data);   
+            })
+            console.log('f : ', f);
+            e.setState({cb_nhietdo: f});
+            console.log('cambien1 : ', e.state.cb_nhietdo);
+        })
+
     }
 
+    componentWillMount(){
+        this.getData();
+    }
+
+    getData(){
+        this.socket.emit('getData', {name: 'nhietdo1'});
+        console.log('press button')
+    }
 
 
     render() {
@@ -159,8 +211,8 @@ export default class GardenScreen extends React.Component {
         const Gradient = () => (
             <Defs key={'gradient'}>
                 <LinearGradient id={'blue'} x1={'0'} y={'0%'} x2={'100%'} y2={'0%'}>
-                    <Stop offset={'0%'} stopColor={'rgb(134, 65, 244)'} />
-                    <Stop offset={'100%'} stopColor={'rgb(66, 194, 244)'} />
+                    <Stop offset={'0%'} stopColor={'#fdc830'} />
+                    <Stop offset={'100%'} stopColor={'#f37335'} />
                 </LinearGradient>
                 <LinearGradient id={'red'} x1={'0'} y={'60%'} x2={'0%'} y2={'60%'}>
                     <Stop offset={'0%'} stopColor={'#ff0000'} />
@@ -178,83 +230,70 @@ export default class GardenScreen extends React.Component {
                 {({ username, setUsername }) => (
                     <View style={styles.root}>
                         <StatusBar
-                            backgroundColor="#19194d"
-                            barStyle="light-content"
+                            backgroundColor="#d9e3ef"
+                            barStyle="dark-content"
                         />
                         <View style={styles.header}>
-                            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                                <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                                    <ProgressCircle
-                                        style={{ height: 100, width: 100 }}
-                                        progress={this.state.roundp1}
-                                        progressColor={'url(#blue)'}
-                                        backgroundColor={'#19194d'}
-                                    >
-                                        <Gradient />
-                                    </ProgressCircle>
-                                    <Text style={{
-                                        color: 'white',
-                                        position: 'absolute',
-                                        fontSize: 15,
-                                        fontWeight: 'bold',
-                                    }}>{this.state.roundp1*100}</Text>
-                                </View>
-                                <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                                    <ProgressCircle
-                                        style={{ height: 100, width: 100 }}
-                                        progress={this.state.roundp2}
-                                        progressColor={'url(#red)'}
-                                        backgroundColor={'#19194d'}
-                                    >
-                                        <Gradient />
-                                    </ProgressCircle>
-                                    <Text style={{
-                                        color: 'white',
-                                        position: 'absolute',
-                                        fontSize: 15,
-                                        fontWeight: 'bold',
-                                    }}>Nhiệt độ</Text>
-                                </View>
-                                <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                                    <ProgressCircle
-                                        style={{ height: 100, width: 100 }}
-                                        progress={this.state.roundp3}
-                                        progressColor={'url(#yellow)'}
-                                        backgroundColor={'#19194d'}
-                                    >
-                                        <Gradient />
-                                    </ProgressCircle>
-                                    <Text style={{
-                                        color: 'white',
-                                        position: 'absolute',
-                                        fontSize: 15,
-                                        fontWeight: 'bold',
-                                    }}>Nồng độ</Text>
-                                </View>
-                            </View>
+                            <Text style={styles.Lable}>Tổng Quan</Text>
                         </View>
                         <ScrollView >
+                            <FlatList
+                                style={{ flexDirection: 'row', paddingLeft: 10, backgroundColor: 'white' }}
+                                horizontal={true}
+                                data={[
+                                    {
+                                        "key": "01",
+                                        "deviceName": "Nhiệt độ",
+                                        "color": "#e2322f",
+                                        "data": this.state.r_nhietdo,
+                                    },
+                                    {
+                                        "key": "02",
+                                        "deviceName": "Độ ẩm đất",
+                                        "color": "#72209b",
+                                        "data": this.state.r_doamD,
+                                    },
+                                    {
+                                        "key": "03",
+                                        "deviceName": "Độ ẩm KK",
+                                        "color": "#94f0fc",
+                                        "data": this.state.r_doamK,
+                                    },
+                                    {
+                                        "key": "04",
+                                        "deviceName": "Cường độ AS",
+                                        "color": "#ffd259",
+                                        "data": this.state.r_anhsang,
+                                    }
+                                ]}
+                                renderItem={({ item, index }) => {
+                                    return (
+                                        <ProgressData item={item} index={index}>
+                                        </ProgressData>
+                                    );
+                                }}
+                            >
+                            </FlatList>
 
                             <View style={styles.dataWrapper}>
-                                <Text style={styles.text}>Cảm biến 1</Text>
                                 <View style={styles.chartWrapper}>
+                                    <Text style={styles.text2}>Nhiệt độ tuần</Text>
                                     <View style={{ flexDirection: 'row', height: 200 }}>
                                         <YAxis
-                                            data={this.state.cam_bien1}
-                                            style={{ marginBottom: xAxisHeight }}
+                                            data={this.state.cb_nhietdo}
+                                            style={{ marginBottom: xAxisHeight, }}
                                             contentInset={verticalContentInset}
                                             svg={axesSvg}
                                         />
                                         <View style={{ flex: 1, paddingLeft: 1 }}>
-
                                             <LineChart
                                                 style={{ flex: 1 }}
-                                                data={this.state.cam_bien1}
+                                                data={this.state.cb_nhietdo}
                                                 contentInset={verticalContentInset}
                                                 curve={shape.curveNatural}
                                                 svg={{
                                                     strokeWidth: 2,
-                                                    stroke: 'url(#blue)',
+                                                    stroke: 'url(#red)',
                                                 }}
                                             >
                                                 <Grid />
@@ -262,7 +301,7 @@ export default class GardenScreen extends React.Component {
                                             </LineChart>
                                             <XAxis
                                                 style={{ marginHorizontal: -10, height: xAxisHeight }}
-                                                data={this.state.cam_bien1}
+                                                data={this.state.cb_nhietdo}
                                                 formatLabel={(value, index) => index}
                                                 contentInset={{ left: 10, right: 10 }}
                                                 svg={axesSvg}
@@ -273,11 +312,11 @@ export default class GardenScreen extends React.Component {
                             </View>
 
                             <View style={styles.dataWrapper}>
-                                <Text style={styles.text}>Cảm biến 2</Text>
                                 <View style={styles.chartWrapper}>
+                                    <Text style={styles.text2}>Độ ẩm đất tuần</Text>
                                     <View style={{ flexDirection: 'row', height: 200 }}>
                                         <YAxis
-                                            data={this.state.cam_bien2}
+                                            data={this.state.cb_doamD}
                                             style={{ marginBottom: xAxisHeight }}
                                             contentInset={verticalContentInset}
                                             svg={axesSvg}
@@ -286,15 +325,15 @@ export default class GardenScreen extends React.Component {
 
                                             <BarChart
                                                 style={{ flex: 1 }}
-                                                data={this.state.cam_bien2}
+                                                data={this.state.cb_doamD}
                                                 gridMin={0}
-                                                svg={{ fill: '#5900b3' }}
+                                                svg={{ fill: '#2f53a8' }}
                                             >
                                                 <Grid />
                                             </BarChart>
                                             <XAxis
                                                 style={{ marginTop: 10 }}
-                                                data={this.state.cam_bien2}
+                                                data={this.state.cb_doamD}
                                                 scale={scale.scaleBand}
                                                 formatLabel={(value, index) => index}
                                                 svg={axesSvg}
